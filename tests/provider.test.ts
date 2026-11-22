@@ -1,14 +1,22 @@
 import { createServer, type Server, type RequestListener } from 'node:http';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { chat, endpoint } from '../src/core/provider';
 import { defaults } from '../src/core/types';
 let server: Server;
-afterEach(async () => { if (server) await new Promise<void>(r => server.close(() => r())); });
+afterEach(async () => { vi.restoreAllMocks(); if (server) await new Promise<void>(r => server.close(() => r())); });
 async function local(handler: RequestListener) {
   server = createServer(handler); await new Promise<void>(r => server.listen(0, '127.0.0.1', r));
   return `http://127.0.0.1:${(server.address() as { port: number }).port}/v1`;
 }
 describe('OpenAI compatible provider', () => {
+  it('uses the current DeepSeek model and disables default thinking without changing generic providers', async () => {
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(JSON.stringify({ choices: [{ message: { content: 'OK' } }] }), { headers: { 'Content-Type': 'application/json' } }));
+    await chat(defaults, 'test-key', [], new AbortController().signal);
+    const body = JSON.parse(fetchMock.mock.calls[0][1]!.body as string);
+    expect(body.model).toBe('deepseek-flash'); expect(body.thinking).toEqual({ type: 'disabled' });
+    await chat({ ...defaults, baseUrl: 'http://localhost:11434/v1' }, '', [], new AbortController().signal);
+    expect(JSON.parse(fetchMock.mock.calls[1][1]!.body as string).thinking).toBeUndefined();
+  });
   it('uses the configured endpoint, auth and optional temperature', async () => {
     let body: any; let auth; let url;
     const baseUrl = await local(async (req, res) => { const chunks = []; for await (const chunk of req) chunks.push(chunk); body = JSON.parse(Buffer.concat(chunks).toString()); auth = req.headers.authorization; url = req.url; res.setHeader('content-type', 'application/json'); res.end(JSON.stringify({ choices: [{ message: { content: 'OK' } }] })); });

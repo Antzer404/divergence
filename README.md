@@ -17,6 +17,8 @@
 - **Windows 10/11 x64**：下载 `.exe` 一键安装并创建桌面快捷方式；或下载 `.zip` 解压后双击 `Divergence.exe`。无需安装 Node.js。
 - 首次打开是明确标注的**内置体验模式**，使用固定示例，便于零配置体验。
 - 打开「偏好设置 → 模型连接」，关闭体验模式，填写兼容 OpenAI Chat Completions 的 API 地址、模型 ID 和 Key，测试后保存。DeepSeek 与本地 Ollama 有快捷预设；本地模型可不填 Key，模型需要先自行下载并运行。
+
+DeepSeek 快捷预设使用官方当前的 `deepseek-flash`，默认关闭思考模式以保留温度采样控制；可填写其他模型 ID。参见 [DeepSeek 官方接入文档](https://api-docs.deepseek.com/)。
 - 更新时使用「关于与更新 → 检查 GitHub 更新」，手动下载新版安装。会话存放在用户数据目录，更新安装程序不会主动删除它。
 
 首版 Windows 安装包未购买代码签名证书，系统可能显示未知发布者。macOS/Linux 提供构建配置，首版不承诺经过实机验证；以 Release 实际附件为准。

@@ -38,10 +38,11 @@ describe('creative engine', () => {
     expect(output.ideas[0].title).toBe('小实验'); expect(chat).toHaveBeenCalledTimes(2);
   });
   it('passes approved tool results into a subsequent model call', async () => {
-    vi.mocked(chat).mockResolvedValueOnce({ content: '', toolCalls: [{ id: 'tc1', type: 'function', function: { name: 'mcp_0', arguments: '{"q":"reference"}' } }] }).mockResolvedValueOnce(ok());
+    vi.mocked(chat).mockResolvedValueOnce({ content: '', reasoningContent: 'provider-required-continuation', toolCalls: [{ id: 'tc1', type: 'function', function: { name: 'mcp_0', arguments: '{"q":"reference"}' } }] }).mockResolvedValueOnce(ok());
     const call = vi.fn().mockResolvedValue('real source result');
     await generate({ ...input, mode: 'quick' }, [], defaults, '', [], new AbortController().signal, () => {}, { definitions: [], call });
     expect(call).toHaveBeenCalledOnce();
+    expect(vi.mocked(chat).mock.calls[1][2].find(m => m.role === 'assistant')?.reasoning_content).toBe('provider-required-continuation');
     expect(vi.mocked(chat).mock.calls[1][2]).toContainEqual({ role: 'tool', tool_call_id: 'tc1', content: 'real source result' });
   });
   it('does not start a model request after cancellation', async () => {

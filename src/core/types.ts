@@ -7,7 +7,7 @@ export const settingsSchema = z.object({
   mcpServers: z.string().max(100_000),
 });
 export type Settings = z.infer<typeof settingsSchema>;
-export const defaults: Settings = { baseUrl: 'https://api.deepseek.com/v1', model: 'deepseek-chat', temperature: 1.1, useTemperature: true, mode: 'deep', demo: true, enabledSkills: ['creative-coach', 'website-directions'], mcpServers: '{\n  "mcpServers": {}\n}' };
+export const defaults: Settings = { baseUrl: 'https://api.deepseek.com', model: 'deepseek-flash', temperature: 1.1, useTemperature: true, mode: 'deep', demo: true, enabledSkills: ['creative-coach', 'website-directions'], mcpServers: '{\n  "mcpServers": {}\n}' };
 export const ideaSchema = z.object({
   id: z.string().optional(), title: z.string().min(1).max(200), lens: z.string().max(100),
   concept: z.string().min(1).max(6000), why: z.string().max(3000),

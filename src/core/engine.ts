@@ -32,7 +32,7 @@ export async function generate(input: RunInput, history: Message[], settings: Se
         }
       }
       if (!bridge || !useTools) throw new Error('模型请求了未启用的工具');
-      messages.push({ role: 'assistant', content: result.content || null, tool_calls: result.toolCalls });
+      messages.push({ role: 'assistant', content: result.content || null, tool_calls: result.toolCalls, ...(result.reasoningContent ? { reasoning_content: result.reasoningContent } : {}) });
       for (const call of result.toolCalls.slice(0, 8)) {
         status('等待工具资料或你的授权…');
         const content = await bridge.call(call.function.name, call.function.arguments, signal);
