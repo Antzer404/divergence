@@ -51,6 +51,7 @@ try {
   const baseUrl = `http://127.0.0.1:${server.address().port}/v1`;
   await page.evaluate(async ({ baseUrl }) => { const boot = await window.divergence.boot(); await window.divergence.saveSettings({ ...boot.settings, demo: false, baseUrl, model: 'test-model', mode: 'quick' }, 'e2e-private-key'); }, { baseUrl });
   await app.close(); page = await launch();
+  await app.evaluate(({ dialog }, filePath) => { dialog.showSaveDialog = async () => ({ canceled: false, filePath }); }, exportPath);
   const stateText = await readFile(path.join(dir, 'state.json'), 'utf8');
   expect(stateText).not.toContain('e2e-private-key');
   expect(JSON.parse(stateText).encryptedKey).toBeTruthy();

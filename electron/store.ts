@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { defaults, settingsSchema, type Settings, type Conversation } from '../src/core/types';
 export interface State { settings: Settings; conversations: Conversation[]; encryptedKey?: string }
 export class Store {
-  state: State = { settings: defaults, conversations: [] };
+  state: State = { settings: structuredClone(defaults), conversations: [] };
   private queue = Promise.resolve();
   constructor(readonly dir: string) {}
   async load() {

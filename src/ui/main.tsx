@@ -128,7 +128,7 @@ function App() {
   }, []);
   useEffect(() => { if (toast) { const timer = setTimeout(() => setToast(''), 3500); return () => clearTimeout(timer); } }, [toast]);
   useEffect(() => { localStorage.setItem('divergence:saved', JSON.stringify(saved)); }, [saved]);
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [conversations, status]);
+  useEffect(() => { if (view === 'chat' && conversations.some(c => c.id === active && c.messages.length)) endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [conversations, status, active, view]);
   function newChat() { setActive(null); setView('chat'); setText(''); inputRef.current?.focus(); }
   useEffect(() => {
     const key = (e: KeyboardEvent) => { if (e.ctrlKey || e.metaKey) { if (e.key === 'n') { e.preventDefault(); newChat(); } if (e.key === ',') { e.preventDefault(); setSettingsTab('model'); } if (e.key === 'k') { e.preventDefault(); setShowSearch(v => !v); } } };
