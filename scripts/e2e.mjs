@@ -3,10 +3,16 @@ import { mkdtemp, mkdir, readFile, rm } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
-import electronExecutable from 'electron';
+import { electronPath } from './electron-path.mjs';
 const dir = await mkdtemp(path.join(os.tmpdir(), 'divergence-e2e-'));
 await mkdir('test-results', { recursive: true });
 const env = { ...process.env, DIVERGENCE_DATA_DIR: dir }; delete env.ELECTRON_RUN_AS_NODE;
+let devServer;
+if (process.argv.includes('--dev')) {
+  const { createServer } = await import('vite');
+  devServer = await createServer(); await devServer.listen();
+  env.DIVERGENCE_DEV_URL = 'http://127.0.0.1:5173';
+}
 let requests = 0, tools = false;
 const fixture = { intro: '本地集成测试返回：独立视角探索，不是实时调研。', questions: [], ideas: [{ title: '测试中的新方向', lens: '跨界借用', concept: '把不同机制转化为可以测试的小实验。', why: '先验证需求', steps: ['邀请两个人体验', '记录反馈'], experiment: '观察是否愿意再次体验', caveat: '这是测试模型', html: '<!doctype html><html><body style="background:#c6e4fa;padding:50px"><h1>TEST DEMO</h1><script>window.parent.hacked=true</script><img src="https://example.com/tracker"><p>完整的静态原型</p></body></html>' }] };
 const server = createServer(async (req, res) => {
@@ -21,7 +27,7 @@ await new Promise(r => server.listen(0, '127.0.0.1', r));
 let app;
 const errors = [];
 async function launch() {
-  app = await electron.launch({ executablePath: process.env.DIVERGENCE_TEST_EXECUTABLE || electronExecutable, args: process.env.DIVERGENCE_TEST_EXECUTABLE ? [] : ['.'], env });
+  app = await electron.launch({ executablePath: process.env.DIVERGENCE_TEST_EXECUTABLE || await electronPath(), args: process.env.DIVERGENCE_TEST_EXECUTABLE ? [] : ['.'], env });
   const page = await app.firstWindow(); page.on('pageerror', e => errors.push(e.message));
   await expect(page.getByRole('button', { name: '开启新的探索' })).toBeVisible();
   return page;
@@ -93,6 +99,7 @@ try {
   console.log('PASS: desktop launch, demos, bookmarks, HTML export, sandbox, settings, encrypted key restart, live provider, clarification, MCP consent, cancellation.');
 } finally {
   if (app) await app.close().catch(() => {});
+  await devServer?.close();
   await new Promise(r => server.close(r));
   await rm(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 300 });
 }

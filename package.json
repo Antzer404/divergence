@@ -10,9 +10,10 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "tsc --noEmit && vite build && node scripts/build-electron.mjs",
-    "start": "electron .",
+    "start": "node scripts/start.mjs",
     "test": "vitest run",
     "test:e2e": "node scripts/e2e.mjs",
+    "test:dev": "node scripts/e2e.mjs --dev",
     "icons": "node scripts/icons.mjs",
     "dist": "npm run build && npm run icons && electron-builder",
     "dist:win": "npm run build && npm run icons && electron-builder --win --x64"

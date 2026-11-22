@@ -8,6 +8,8 @@
 
 常见 Agent 帮你把任务收敛到完成。Divergence 帮你打开更多可能：多种视角独立发散、跨界重组，每条方向都附带第一步和最小验证实验，把选择权留给你。
 
+![Divergence 桌面应用](assets/screenshot.png)
+
 ## 下载安装
 
 只通过 [GitHub Releases](https://github.com/Antzer404/divergence/releases) 分发。
@@ -56,6 +58,7 @@ npm run dev
 npm run build
 npm test
 npm run test:e2e
+npm run test:dev
 npm run dist:win
 ```
 

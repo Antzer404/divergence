@@ -37,4 +37,6 @@ SKILL.md 的脚本不自动执行。stdio MCP 是用户选择启动的进程，�
 
 electron-builder 生成 Windows NSIS 一键安装包和 ZIP。更新只查询固定 GitHub 仓库的最新正式 Release 并打开下载页面，不下载或执行任意更新代码。工作流包含受版本控制的 lockfile 与 SHA256 校验文件。
 
+Windows 开发/测试脚本把 Electron 运行时缓存到 `%LOCALAPPDATA%/Divergence-runtime/<version>`，保留 `electron.exe` 文件名，以避免某些工作目录的权限干扰 Chromium 沙箱，同时正确识别开发资源路径。安装版不需要这份开发缓存。
+
 参考：[Electron security](https://www.electronjs.org/docs/latest/tutorial/security)、[safeStorage](https://www.electronjs.org/docs/latest/api/safe-storage)、[MCP SDK client](https://ts.sdk.modelcontextprotocol.io/client.html)、[Agent Skills specification](https://agentskills.io/specification)。
