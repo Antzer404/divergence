@@ -26,6 +26,12 @@ jobs:
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
       - run: npm run test:e2e
+      - name: Verify packaged desktop
+        shell: pwsh
+        run: |
+          $env:DIVERGENCE_TEST_EXECUTABLE = (Resolve-Path release/win-unpacked/Divergence.exe).Path
+          npm run test:e2e
+          exit $LASTEXITCODE
       - run: node scripts/checksums.mjs
       - name: Publish GitHub Release
         shell: pwsh

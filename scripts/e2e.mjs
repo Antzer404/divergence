@@ -71,7 +71,7 @@ try {
   await page.getByRole('button', { name: '先问再想', exact: true }).click();
   await page.getByRole('textbox', { name: '描述你想探索的问题' }).fill('员工缺少热情');
   await page.getByRole('button', { name: '开始探索', exact: true }).click();
-  await expect(page.getByText('你最关心的约束是什么？', { exact: true })).toBeVisible();
+  await expect(page.locator('.questions p').filter({ hasText: '你最关心的约束是什么？' })).toBeVisible();
   await page.getByRole('button', { name: '填写我的回答' }).click();
   await expect(page.getByRole('textbox', { name: '描述你想探索的问题' })).toHaveValue(/我的回答/);
   // Real stdio integration through main process + renderer approval dialog.
