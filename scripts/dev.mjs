@@ -1,10 +1,10 @@
 import { spawn } from 'node:child_process';
 import { build } from 'esbuild';
 import { createServer } from 'vite';
-import { electronPath } from './electron-path.mjs';
+import electron from 'electron';
 await build({ entryPoints: ['electron/main.ts', 'electron/preload.ts'], outdir: 'dist-electron', bundle: true, platform: 'node', format: 'cjs', outExtension: { '.js': '.cjs' }, external: ['electron'], target: 'node22' });
 const server = await createServer(); await server.listen();
 const env = { ...process.env, DIVERGENCE_DEV_URL: 'http://127.0.0.1:5173' }; delete env.ELECTRON_RUN_AS_NODE;
-const child = spawn(await electronPath(), ['.'], { stdio: 'inherit', env });
+const child = spawn(electron, ['.'], { stdio: 'inherit', env });
 child.on('exit', async code => { await server.close(); process.exit(code ?? 0); });
 process.on('SIGINT', () => child.kill());

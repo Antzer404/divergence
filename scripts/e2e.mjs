@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, readFile, rm } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
-import { electronPath } from './electron-path.mjs';
+import electronExecutable from 'electron';
 const dir = await mkdtemp(path.join(os.tmpdir(), 'divergence-e2e-'));
 await mkdir('test-results', { recursive: true });
 const env = { ...process.env, DIVERGENCE_DATA_DIR: dir }; delete env.ELECTRON_RUN_AS_NODE;
@@ -21,7 +21,7 @@ await new Promise(r => server.listen(0, '127.0.0.1', r));
 let app;
 const errors = [];
 async function launch() {
-  app = await electron.launch({ executablePath: await electronPath(), args: ['.'], env });
+  app = await electron.launch({ executablePath: process.env.DIVERGENCE_TEST_EXECUTABLE || electronExecutable, args: process.env.DIVERGENCE_TEST_EXECUTABLE ? [] : ['.'], env });
   const page = await app.firstWindow(); page.on('pageerror', e => errors.push(e.message));
   await expect(page.getByRole('button', { name: '开启新的探索' })).toBeVisible();
   return page;
