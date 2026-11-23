@@ -10,6 +10,8 @@
 
 ![Divergence 桌面应用](assets/screenshot.png)
 
+v0.1.1 改善了创作空间：内置离线可用的 Noto Sans SC / Inter 可变字体，提高字号、字重与对比度；为二级页面、侧栏与点子展开加入柔和动效，并细化聊天框的指针反馈与自动增高。支持键盘导航及系统减少动态效果偏好。
+
 ## 下载安装
 
 只通过 [GitHub Releases](https://github.com/Antzer404/divergence/releases) 分发。
@@ -79,3 +81,5 @@ npm run dist:win
 仓库包含 CI 与 Windows Release 工作流。CI 运行类型检查、测试和构建；推送 `v*` 标签会构建安装包、便携 ZIP、SHA256 校验文件并发布到 GitHub Releases。也可使用 `workflow_dispatch` 发布指定已有标签。无应用内自动安装更新。
 
 MIT License.
+
+字体另遵循 SIL Open Font License，许可证随安装包提供，源码位于 [assets/licenses](assets/licenses)。字体通过 [Fontsource](https://fontsource.org/docs/getting-started/variable) 随应用打包，不连接外部字体服务。

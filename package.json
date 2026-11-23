@@ -1,6 +1,6 @@
 {
   "name": "divergence",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "伟大的作品诞生于伟大的想法。A desktop anti-harness for divergent thinking.",
   "author": "Antzer404",
   "license": "MIT",
@@ -19,6 +19,8 @@
     "dist:win": "npm run build && npm run icons && electron-builder --win --x64"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/noto-sans-sc": "^5.3.1",
     "@modelcontextprotocol/sdk": "^1.32.2",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.468.0",
@@ -52,6 +54,7 @@
       "dist/**",
       "dist-electron/**",
       "assets/icon.png",
+      "assets/licenses/**",
       "package.json"
     ],
     "extraResources": [
