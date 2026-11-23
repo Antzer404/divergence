@@ -1,5 +1,13 @@
 # 更新记录
 
+## 0.1.2 · 2026-11-23
+
+- 增加原生 Apple Silicon 与 Intel macOS 的 DMG、ZIP 构建，实际运行验收交由用户的 MacBook。
+- 使用显式 ad-hoc 签名和所需 Electron entitlements，保留 Hardened Runtime；尚无 Apple Developer ID 与公证。
+- 增加 macOS 原生应用/编辑/窗口菜单，支持常用编辑快捷键；修复窗口已关闭时的第二实例焦点处理。
+- 发布流程改为三平台原生构建、单任务聚合发布，统一计算 SHA256，校验标签与包版本。
+- 增加 macOS 包结构、实际架构、签名、资源及 DMG 完整性检查和手动验收说明。
+
 ## 0.1.1 · 2026-11-23
 
 - 引入随包分发的 Noto Sans SC / Inter 可变字体，使用连续字重，避免系统字体的粗细跳变。主要正文 15–16px，标签与辅助文字以 12–14px 为主，大窗口增加一级字号。

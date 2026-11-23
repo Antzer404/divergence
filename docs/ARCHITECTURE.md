@@ -36,7 +36,9 @@ SKILL.md 的脚本不自动执行。stdio MCP 是用户选择启动的进程，�
 
 ## 分发
 
-electron-builder 生成 Windows NSIS 一键安装包和 ZIP。更新只查询固定 GitHub 仓库的最新正式 Release 并打开下载页面，不下载或执行任意更新代码。工作流包含受版本控制的 lockfile 与 SHA256 校验文件。
+electron-builder 生成 Windows NSIS 安装包/ZIP，以及 macOS arm64、x64 各自的 DMG/ZIP。工作流在 Windows、原生 Apple Silicon 与 Intel macOS runner 分别构建，再由单一发布任务合并产物并计算统一校验文件。标签必须与 package.json 版本一致。更新只查询固定 GitHub 仓库的最新正式 Release 并打开下载页面，不下载或执行任意更新代码。
+
+macOS 首版用于用户验收，使用 `identity: "-"` 显式 ad-hoc 签名，尚无 Developer ID 或 Apple 公证。保留 Hardened Runtime，声明 Electron JIT 与 ad-hoc 框架加载所需的 entitlement。包验证会检查 Mach-O 实际架构、深度签名、entitlements、字体、技能、图标及 DMG 完整性；不会把这些静态检查表述为 MacBook 运行验收通过。macOS 使用原生应用、编辑、窗口菜单，支持标准复制粘贴和退出行为。
 
 Windows 开发/测试脚本把 Electron 运行时缓存到 `%LOCALAPPDATA%/Divergence-runtime/<version>`，保留 `electron.exe` 文件名，以避免某些工作目录的权限干扰 Chromium 沙箱，同时正确识别开发资源路径。安装版不需要这份开发缓存。
 

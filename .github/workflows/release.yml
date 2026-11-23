@@ -5,13 +5,37 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Existing version tag (e.g. v0.1.0)
+        description: Existing version tag matching package.json (e.g. v0.1.2)
         required: true
 permissions:
-  contents: write
+  contents: read
+concurrency:
+  group: desktop-release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
 jobs:
-  windows:
-    runs-on: windows-latest
+  build:
+    name: Build ${{ matrix.id }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: windows-x64
+            runner: windows-latest
+            platform: win
+            arch: x64
+          - id: mac-arm64
+            runner: macos-15
+            platform: mac
+            arch: arm64
+          - id: mac-x64
+            runner: macos-15-intel
+            platform: mac
+            arch: x64
+    env:
+      RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,28 +44,73 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - run: node scripts/validate-release.mjs
       - run: npm ci
       - run: npm test
-      - run: npm run dist:win -- --publish never
-        env:
-          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-      - run: npm run test:e2e
-      - name: Verify packaged desktop
+      - name: Build Windows
+        if: matrix.platform == 'win'
+        run: npm run dist:win -- --publish never
+      - name: Build macOS
+        if: matrix.platform == 'mac'
+        run: npm run dist:mac -- --${{ matrix.arch }} --publish never
+      - name: Verify Windows desktop
+        if: matrix.platform == 'win'
+        run: npm run test:e2e
+      - name: Verify packaged Windows desktop
+        if: matrix.platform == 'win'
         shell: pwsh
         run: |
           $env:DIVERGENCE_TEST_EXECUTABLE = (Resolve-Path release/win-unpacked/Divergence.exe).Path
           npm run test:e2e
           exit $LASTEXITCODE
+      - name: Verify macOS package integrity
+        if: matrix.platform == 'mac'
+        run: npm run verify:mac
+        env:
+          MAC_ARCH: ${{ matrix.arch }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ matrix.id }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            release/*.exe
+            release/*.zip
+            release/*.dmg
+      - uses: actions/upload-artifact@v4
+        if: always() && matrix.platform == 'mac'
+        with:
+          name: mac-verification-${{ matrix.arch }}
+          retention-days: 7
+          path: test-results/mac-build-*.json
+  publish:
+    name: Publish all desktop packages
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: desktop-*
+          merge-multiple: true
+          path: release
+      - run: node scripts/validate-release.mjs
       - run: node scripts/checksums.mjs
       - name: Publish GitHub Release
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+        shell: bash
         run: |
-          gh release view $env:RELEASE_TAG 2>$null
-          if ($LASTEXITCODE -ne 0) {
-            gh release create $env:RELEASE_TAG --title "Divergence $env:RELEASE_TAG" --notes-file docs/RELEASE.md --verify-tag
-            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          }
-          gh release upload $env:RELEASE_TAG release/*.exe release/*.zip release/SHA256SUMS.txt --clobber
+          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --title "Divergence $RELEASE_TAG" --notes-file docs/RELEASE.md --verify-tag
+          fi
+          gh release upload "$RELEASE_TAG" release/*.exe release/*.zip release/*.dmg release/SHA256SUMS.txt --clobber

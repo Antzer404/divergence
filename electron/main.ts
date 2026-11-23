@@ -149,7 +149,9 @@ function setupIpc() {
 }
 async function createWindow() {
   win = new BrowserWindow({ width: 1440, height: 940, minWidth: 960, minHeight: 680, title: 'Divergence', backgroundColor: '#f8f9fb', icon: path.join(app.getAppPath(), 'assets/icon.png'), webPreferences: { preload: path.join(__dirname, 'preload.cjs'), contextIsolation: true, nodeIntegration: false, sandbox: true, webviewTag: false } });
-  Menu.setApplicationMenu(null);
+  Menu.setApplicationMenu(process.platform === 'darwin'
+    ? Menu.buildFromTemplate([{ role: 'appMenu' }, { role: 'editMenu' }, { role: 'windowMenu' }])
+    : null);
   win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   win.webContents.on('will-navigate', event => event.preventDefault());
   if (!app.isPackaged && process.env.DIVERGENCE_DEV_URL) await win.loadURL(process.env.DIVERGENCE_DEV_URL);
@@ -157,7 +159,7 @@ async function createWindow() {
 }
 if (!app.requestSingleInstanceLock()) app.quit();
 else {
-  app.on('second-instance', () => { if (win) { if (win.isMinimized()) win.restore(); win.focus(); } });
+  app.on('second-instance', () => { if (win && !win.isDestroyed()) { if (win.isMinimized()) win.restore(); win.focus(); } });
   app.whenReady().then(async () => { store = new Store(app.getPath('userData')); await store.load(); setupIpc(); await createWindow(); });
   app.on('window-all-closed', () => { for (const run of runs.values()) run.abort(); if (process.platform !== 'darwin') app.quit(); });
   app.on('activate', () => { if (!BrowserWindow.getAllWindows().length) void createWindow(); });

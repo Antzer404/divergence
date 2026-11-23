@@ -17,13 +17,15 @@ v0.1.1 改善了创作空间：内置离线可用的 Noto Sans SC / Inter 可变
 只通过 [GitHub Releases](https://github.com/Antzer404/divergence/releases) 分发。
 
 - **Windows 10/11 x64**：下载 `.exe` 一键安装并创建桌面快捷方式；或下载 `.zip` 解压后双击 `Divergence.exe`。无需安装 Node.js。
+- **macOS / Apple Silicon（M 系列）**：下载 `mac-arm64.dmg`，打开后把 Divergence 拖入 Applications。
+- **macOS / Intel**：下载 `mac-x64.dmg`。两个架构均提供 ZIP 备用包。应用不需要另装 Node.js；macOS 首版实际使用验收由用户完成，详见 [MacBook 验收说明](docs/MACOS_ACCEPTANCE.md)。
 - 首次打开是明确标注的**内置体验模式**，使用固定示例，便于零配置体验。
 - 打开「偏好设置 → 模型连接」，关闭体验模式，填写兼容 OpenAI Chat Completions 的 API 地址、模型 ID 和 Key，测试后保存。DeepSeek 与本地 Ollama 有快捷预设；本地模型可不填 Key，模型需要先自行下载并运行。
 
 DeepSeek 快捷预设使用官方当前的 `deepseek-flash`，默认关闭思考模式以保留温度采样控制；可填写其他模型 ID。参见 [DeepSeek 官方接入文档](https://api-docs.deepseek.com/)。
 - 更新时使用「关于与更新 → 检查 GitHub 更新」，手动下载新版安装。会话存放在用户数据目录，更新安装程序不会主动删除它。
 
-首版 Windows 安装包未购买代码签名证书，系统可能显示未知发布者。macOS/Linux 提供构建配置，首版不承诺经过实机验证；以 Release 实际附件为准。
+Windows 安装包未购买代码签名证书，系统可能显示未知发布者。macOS 使用 ad-hoc 签名，保留 Hardened Runtime，尚未获得 Apple Developer ID 签名与 Apple 公证，首次打开可能需要按系统提示手动批准。Linux 目前仅有构建配置，以 Release 实际附件为准。
 
 ## 可以怎样用
 
@@ -66,19 +68,29 @@ npm run test:dev
 npm run dist:win
 ```
 
+在 Mac 上构建对应架构：
+
+```sh
+npm run dist:mac -- --arm64 --publish never
+# Intel 使用 --x64
+npm run verify:mac
+```
+
+本地验证默认使用当前机器架构；交叉构建时可通过 `MAC_ARCH=arm64` 或 `MAC_ARCH=x64` 指定要检查的产物。
+
 `npm run dev` 一条命令启动开发服务与桌面窗口；修改 Electron 后端后需重新运行。安装版直接双击快捷方式。`npm run start` 启动已构建产物。
 
 技术栈：Electron、React、TypeScript、Vite、Zod、MCP TypeScript SDK、electron-builder。原生聊天界面与图标为本项目编写，无需依赖其他 harness 前端。架构与边界见 [ARCHITECTURE.md](docs/ARCHITECTURE.md)。
 
 ## 数据和隐私
 
-无用户系统、遥测或中心后端。聊天记录与设置保存在 Electron 用户数据目录：Windows 默认 `%APPDATA%/Divergence`（开发版目录可能为 `divergence`）；API Key 用系统安全存储加密。聊天正文与 MCP 配置为本机明文 JSON，请勿在 MCP 配置里直接填写敏感令牌，优先让服务器从系统环境变量读取。
+无用户系统、遥测或中心后端。聊天记录与设置保存在 Electron 用户数据目录：Windows 默认 `%APPDATA%/Divergence`（开发版目录可能为 `divergence`），macOS 默认 `~/Library/Application Support/divergence`；API Key 用系统安全存储加密。聊天正文与 MCP 配置为本机明文 JSON，请勿在 MCP 配置里直接填写敏感令牌，优先让服务器从系统环境变量读取。
 
 真实生成时，最近上下文与启用技能发送到你配置的模型服务。MCP 只连接显式启用的服务器；stdio 连接会启动配置的本机进程。生成的 HTML 会移除脚本、事件与外部资源，预览使用沙箱；它们是静态原型，不自动部署。软件不内置通用终端/任意文件操作工具，也不自动执行技能脚本。
 
 ## 发布
 
-仓库包含 CI 与 Windows Release 工作流。CI 运行类型检查、测试和构建；推送 `v*` 标签会构建安装包、便携 ZIP、SHA256 校验文件并发布到 GitHub Releases。也可使用 `workflow_dispatch` 发布指定已有标签。无应用内自动安装更新。
+仓库包含 CI 与跨平台 Release 工作流。推送 `v*` 标签后，Windows x64、macOS arm64、macOS x64 在对应的原生 runner 构建；Windows 继续运行桌面测试，macOS 检查包结构、实际 CPU 架构、深度签名、字体、内置技能与 DMG 完整性，运行体验交由用户在 MacBook 验收。全部构建通过后统一上传，并生成包含所有平台产物的 SHA256 校验文件，避免多平台相互覆盖。也可使用 `workflow_dispatch` 发布与 package.json 版本一致的已有标签。无应用内自动安装更新。
 
 MIT License.
 

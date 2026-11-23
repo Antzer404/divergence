@@ -1,18 +1,16 @@
 伟大的作品诞生于伟大的想法。
 
-Divergence v0.1.1：让创作空间更清晰、更流畅。
+Divergence v0.1.2：增加 macOS 的 Apple Silicon 与 Intel 安装包。
 
-- 内置 Noto Sans SC 与 Inter 可变字体，细分正文、标签与标题的字重；提高字号、文字对比度，适配高分辨率窗口。
-- 设置、网站预览、工具授权、删除确认弹层支持完整的打开与关闭动画；设置分类、收藏页与侧栏平滑切换。
-- 聊天框与卡片增加局部指针光感，按钮有轻微悬停和按下反馈，不替换系统鼠标指针。
-- 点击聊天框空白处即可输入，编辑区随内容自动增高；模式按钮和文本选择保持各自的交互行为。
-- 点子细节平滑展开/收起，收藏提供轻量反馈。
-- 改进弹层焦点恢复与背景隔离，支持键盘切换设置分类，尊重系统减少动态效果偏好。
+- **M 系列 Mac**：下载 `Divergence-0.1.2-mac-arm64.dmg`。
+- **Intel Mac**：下载 `Divergence-0.1.2-mac-x64.dmg`。
+- 打开 DMG，将 Divergence 拖入 Applications 再运行；两个架构均提供 ZIP 备用包。
+- **Windows x64**：继续提供 `.exe` 一键安装版和 `.zip`。
 
-本机与 CI 检查覆盖核心功能、字体实际加载、大窗口及最小窗口布局、输入框、键盘导航、弹层生命周期和打包程序。
+macOS 为首次验收版，运行体验交由用户在 MacBook 上验收。构建流程检查实际 CPU 架构、包结构、深度签名、图标、内置技能、字体及 DMG 完整性；Windows 保留完整桌面测试。
 
-Windows x64：下载 `.exe` 一键安装，或 `.zip` 解压后运行 Divergence.exe。无需 Node.js。
+macOS 当前使用 ad-hoc 签名，保留 Hardened Runtime，尚无 Apple Developer ID 签名和 Apple 公证。首次打开可能需要你按 macOS 提示手动批准，详见 [MacBook 安装与验收说明](https://github.com/Antzer404/divergence/blob/main/docs/MACOS_ACCEPTANCE.md)。无需关闭全局系统保护。
 
-已有用户直接安装新版即可保留本机会话和设置。首次运行使用明确标注的固定示例；真实生成请配置模型，实时检索需要搜索 MCP。安装包未购买代码签名证书。更多说明见仓库 README。
+保留 v0.1.1 的可变字体、流畅动效、聊天框交互与完整创意功能。新增 macOS 原生编辑菜单与窗口行为。已有用户安装新版会沿用本机会话和设置；macOS 的钥匙串访问提示需手动确认。
 
-SHA256SUMS.txt 可用于校验下载文件。
+首次运行使用内置示例；真实生成需配置模型，实时检索需要搜索 MCP。所有安装包通过本 Release 分发，`SHA256SUMS.txt` 包含全部平台产物的校验值。
