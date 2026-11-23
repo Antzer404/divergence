@@ -48,6 +48,6 @@ await mkdir('test-results', { recursive: true });
 await writeFile(`test-results/mac-build-${arch}.json`, JSON.stringify({
   version, architecture: binaryArch, signature: 'ad-hoc', hardenedRuntime: true,
   notarized: false, verified: ['bundle metadata', 'CPU architecture', 'deep signature', 'JIT entitlements', 'icon', 'built-in skills', 'application archive', 'fonts', 'DMG integrity'],
-  runtimeAcceptance: 'Pending manual acceptance on the user’s MacBook',
+  runtimeAcceptance: 'Functionality accepted by the user on all distributed platforms before v1.0.0; this report verifies the rebuilt package only',
 }, null, 2));
-console.log(`PASS: macOS ${arch} archive, architecture, ad-hoc signature, resources and DMG. Runtime acceptance is manual.`);
+console.log(`PASS: macOS ${arch} archive, architecture, ad-hoc signature, resources and DMG. User runtime acceptance is recorded separately.`);

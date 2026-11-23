@@ -10,7 +10,7 @@
 
 ![Divergence 桌面应用](assets/screenshot.png)
 
-v0.1.1 改善了创作空间：内置离线可用的 Noto Sans SC / Inter 可变字体，提高字号、字重与对比度；为二级页面、侧栏与点子展开加入柔和动效，并细化聊天框的指针反馈与自动增高。支持键盘导航及系统减少动态效果偏好。
+**v1.0.0 正式版**：Windows、Apple Silicon Mac 与 Intel Mac 已通过用户验收。提供完整的创意发散、技能与插件扩展、离线可用的 Noto Sans SC / Inter 可变字体，以及柔和动效、聊天框指针反馈与自动增高。支持键盘导航及系统减少动态效果偏好。
 
 ## 下载安装
 
@@ -18,7 +18,7 @@ v0.1.1 改善了创作空间：内置离线可用的 Noto Sans SC / Inter 可变
 
 - **Windows 10/11 x64**：下载 `.exe` 一键安装并创建桌面快捷方式；或下载 `.zip` 解压后双击 `Divergence.exe`。无需安装 Node.js。
 - **macOS / Apple Silicon（M 系列）**：下载 `mac-arm64.dmg`，打开后把 Divergence 拖入 Applications。
-- **macOS / Intel**：下载 `mac-x64.dmg`。两个架构均提供 ZIP 备用包。应用不需要另装 Node.js；macOS 首版实际使用验收由用户完成，详见 [MacBook 验收说明](docs/MACOS_ACCEPTANCE.md)。
+- **macOS / Intel**：下载 `mac-x64.dmg`。两个架构均提供 ZIP 备用包。应用不需要另装 Node.js，详见 [MacBook 安装说明](docs/MACOS_ACCEPTANCE.md)。
 - 首次打开是明确标注的**内置体验模式**，使用固定示例，便于零配置体验。
 - 打开「偏好设置 → 模型连接」，关闭体验模式，填写兼容 OpenAI Chat Completions 的 API 地址、模型 ID 和 Key，测试后保存。DeepSeek 与本地 Ollama 有快捷预设；本地模型可不填 Key，模型需要先自行下载并运行。
 
@@ -90,7 +90,7 @@ npm run verify:mac
 
 ## 发布
 
-仓库包含 CI 与跨平台 Release 工作流。推送 `v*` 标签后，Windows x64、macOS arm64、macOS x64 在对应的原生 runner 构建；Windows 继续运行桌面测试，macOS 检查包结构、实际 CPU 架构、深度签名、字体、内置技能与 DMG 完整性，运行体验交由用户在 MacBook 验收。全部构建通过后统一上传，并生成包含所有平台产物的 SHA256 校验文件，避免多平台相互覆盖。也可使用 `workflow_dispatch` 发布与 package.json 版本一致的已有标签。无应用内自动安装更新。
+仓库包含 CI 与跨平台 Release 工作流。推送 `v*` 标签后，Windows x64、macOS arm64、macOS x64 在对应的原生 runner 构建；Windows 运行桌面测试，macOS 检查包结构、实际 CPU 架构、深度签名、字体、内置技能与 DMG 完整性。v1.0.0 对应的功能已通过用户全平台运行验收；CI 的包检查与用户实机验收分别记录。全部构建通过后统一上传，并生成包含所有平台产物的 SHA256 校验文件，避免多平台相互覆盖。也可使用 `workflow_dispatch` 发布与 package.json 版本一致的已有标签。无应用内自动安装更新。
 
 MIT License.
 

@@ -1,16 +1,35 @@
 伟大的作品诞生于伟大的想法。
 
-Divergence v0.1.2：增加 macOS 的 Apple Silicon 与 Intel 安装包。
+# Divergence v1.0.0 正式版
 
-- **M 系列 Mac**：下载 `Divergence-0.1.2-mac-arm64.dmg`。
-- **Intel Mac**：下载 `Divergence-0.1.2-mac-x64.dmg`。
-- 打开 DMG，将 Divergence 拖入 Applications 再运行；两个架构均提供 ZIP 备用包。
-- **Windows x64**：继续提供 `.exe` 一键安装版和 `.zip`。
+基于用户已完成全平台验收的版本，Divergence 正式发布 v1.0.0。
 
-macOS 为首次验收版，运行体验交由用户在 MacBook 上验收。构建流程检查实际 CPU 架构、包结构、深度签名、图标、内置技能、字体及 DMG 完整性；Windows 保留完整桌面测试。
+## 下载
 
-macOS 当前使用 ad-hoc 签名，保留 Hardened Runtime，尚无 Apple Developer ID 签名和 Apple 公证。首次打开可能需要你按 macOS 提示手动批准，详见 [MacBook 安装与验收说明](https://github.com/Antzer404/divergence/blob/main/docs/MACOS_ACCEPTANCE.md)。无需关闭全局系统保护。
+| 平台 | 安装包 |
+| --- | --- |
+| Windows x64 | `Divergence-1.0.0-win-x64.exe`，或便携 ZIP |
+| Apple Silicon / M 系列 Mac | `Divergence-1.0.0-mac-arm64.dmg`，或 ZIP |
+| Intel Mac | `Divergence-1.0.0-mac-x64.dmg`，或 ZIP |
 
-保留 v0.1.1 的可变字体、流畅动效、聊天框交互与完整创意功能。新增 macOS 原生编辑菜单与窗口行为。已有用户安装新版会沿用本机会话和设置；macOS 的钥匙串访问提示需手动确认。
+打开 DMG 后将 Divergence 拖入 Applications。Windows 安装程序会创建桌面快捷方式。应用无需另装 Node.js。
 
-首次运行使用内置示例；真实生成需配置模型，实时检索需要搜索 MCP。所有安装包通过本 Release 分发，`SHA256SUMS.txt` 包含全部平台产物的校验值。
+## 正式版功能
+
+- 三个独立视角发散与跨界重组，保留多条有创造力、可落地的方向。
+- 快速发散与引导问答、点子收藏和继续分支。
+- 多套网站 HTML demo 的隔离预览、导出，以及 Markdown 会话导出。
+- 兼容模型服务，API Key 使用操作系统安全存储加密，会话与设置保存在本机。
+- 标准 SKILL.md 与 MCP 插件通道，工具调用逐次授权。
+- 内置可变字体、柔和页面动效、聊天框指针交互与原生 macOS 菜单。
+- 无 Divergence 账号、无遥测，只通过 GitHub Releases 分发和手动更新。
+
+## 升级与校验
+
+已有用户完全退出后安装新版，可沿用现有会话、收藏和配置；macOS 钥匙串访问提示按系统要求确认。
+
+所有平台重新构建并进行对应检查，`SHA256SUMS.txt` 包含六个安装产物的校验值。用户全平台运行验收已通过，CI 检查记录见本次发布工作流。
+
+签名方案沿用已验收版本：Windows 未购买代码签名证书；macOS 使用 ad-hoc 签名并保留 Hardened Runtime，尚无 Apple Developer ID 签名和 Apple 公证。首次打开如遇系统提示，请参阅 [MacBook 安装说明](https://github.com/Antzer404/divergence/blob/v1.0.0/docs/MACOS_ACCEPTANCE.md)。
+
+首次运行可直接体验内置示例；真实生成需配置模型服务和 API Key，实时检索通过搜索 MCP 提供。
